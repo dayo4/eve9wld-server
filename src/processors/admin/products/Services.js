@@ -8,27 +8,8 @@ module.exports = {
         const filter = query.filter
         const sort = query.sort /* string e.g: 'desc' */
 
-        async function fetchProductReviews(product) {
-            const review = await knex
-                .select("id", "status", "rating", "review", "verified")
-                .from("product_reviews")
-                .where("product_id", product.id)
-                .first()
-
-            //   const commentCount = await knex("posts_comments")
-            //     .where("post_id", post.id)
-            //     .count();
-            //   if (user) {
-            return {
-                ...product,
-                review,
-                //   comments: commentCount[0]["count(*)"],
-                // };
-            }
-        }
-
         try {
-            const fetchedProducts = await knex
+            const products = await knex
                 .select(
                     "id",
                     "user_id",
@@ -42,10 +23,12 @@ module.exports = {
                     "average_rating",
                     "rating_count",
                     "categories",
+                    "tags",
                     "images",
                     "upsell_ids",
                     "cross_sell_ids",
                     "related_ids",
+                    "reviews_count",
                     "created_at",
                     "updated_at"
                 )
@@ -54,14 +37,12 @@ module.exports = {
                 .orderBy(...sort)
                 .limit(limit)
                 .offset(offset)
-            const productsCount = await knex("products")
-                // .where({ published: true })
-                .count()
-            const products = await Promise.all(
-                fetchedProducts.map(async (product) => {
-                    return await fetchProductReviews(product)
-                })
-            )
+            const productsCount = await knex("products").where(filter).count()
+            // const products = await Promise.all(
+            //     fetchedProducts.map(async (product) => {
+            //         return await fetchProductReviews(product)
+            //     })
+            // )
 
             return { products, count: productsCount[0]["count(*)"] }
         } catch (e) {
@@ -89,10 +70,12 @@ module.exports = {
                     "average_rating",
                     "rating_count",
                     "categories",
+                    "tags",
                     "images",
                     "upsell_ids",
                     "cross_sell_ids",
                     "related_ids",
+                    "reviews_count",
                     "created_at",
                     "updated_at"
                 )
@@ -129,21 +112,34 @@ module.exports = {
         //   slug: slug,
         //   content: content,
         // };
+        const allowedEntries = [
+            "name",
+            "slug",
+            "price",
+            "sale_price",
+            "description",
+            "short_description",
+            "status",
+            "average_rating",
+            "rating_count",
+            "categories",
+            "images",
+            "upsell_ids",
+            "cross_sell_ids",
+        ]
 
-        const data = request.body
+        const data = {
+            user_id,
+        }
+
+        Object.keys(request.body).forEach((key) => {
+            if (allowedEntries.includes(key)) data[key] = request.body[key]
+        })
+
+        // const data = request.body
 
         try {
-            const product_id = await knex("products").insert({ ...data, user_id: user_id }, [
-                "slug",
-                "id",
-            ])
-            //   if (contentImages) {
-            //     await knex("posts_images").insert({
-            //       urls: JSON.stringify(contentImages),
-            //       user_id: user_id,
-            //       post_id: post_id,
-            //     });
-            //   }
+            const product_id = await knex("products").insert(data)
 
             return product_id
         } catch (e) {
@@ -153,42 +149,52 @@ module.exports = {
 
     async update(request, reply) {
         // const user_id = request.params.user_id;
-        const productIds = request.body.productIds
-        // const {
-        //   name,
-        //   slug,
-        //   description,
-        //   short_description,
-        //   sale_price,
-        //   price,
-        //   images,
-        //   categories,
-        //   status,
-        // } = request.body;
+        const productsIds = request.body.productsIds
+        const allowedEntries = [
+            "name",
+            "slug",
+            "price",
+            "sale_price",
+            "description",
+            "short_description",
+            "status",
+            "average_rating",
+            "rating_count",
+            "categories",
+            "images",
+            "upsell_ids",
+            "cross_sell_ids",
+        ]
 
+        const data = {}
+
+        Object.keys(request.body).forEach((key) => {
+            if (allowedEntries.includes(key)) data[key] = request.body[key]
+        })
+        // console.log(data)
         let updated = 0
         async function updater(dataToSave) {
-            for (const product_id of productIds) {
-                await knex("posts")
+            for (const product_id of productsIds) {
+                await knex("products")
                     .where("id", product_id)
                     //   .andWhere("user_id", user_id)
                     .update(dataToSave)
                 updated++
-                if (updated === productIds.length) return "All data successfully updated."
+                if (updated === productsIds.length) return "All data successfully updated."
             }
         }
 
         try {
-            const updated = updater(request.body.data)
+            const updated = updater(data)
             return updated
         } catch (e) {
-            hlp.error(`An Error Occured: ${updated} of ${productIds.length} updated.`)
+            hlp.error(`An Error Occured: ${updated} of ${productsIds.length} updated.`)
         }
     },
 
     async delete(request, reply) {
         // const user_id = request.params.user_id;
-        const productsToDelete = request.body.productIds
+        const productsToDelete = request.body.productsIds
 
         let deletedProducts = 0
         for (const product_id of productsToDelete) {

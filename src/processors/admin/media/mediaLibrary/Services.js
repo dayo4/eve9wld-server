@@ -26,7 +26,7 @@ module.exports = {
     async upload(request, reply) {
         const user_id = request.params.user_id
         // const post_id = request.params.post_id
-        const possibleEntries = ["caption", "alt", "description", "type"]
+        const allowedEntries = ["caption", "alt", "description", "type"]
 
         if (request.file) {
             const imageUrl = imgBaseUrl + request.file.filename
@@ -38,7 +38,7 @@ module.exports = {
             }
 
             Object.keys(request.body).forEach((key) => {
-                if (possibleEntries.includes(key)) data[key] = request.body[key]
+                if (allowedEntries.includes(key)) data[key] = request.body[key]
             })
 
             try {
@@ -62,7 +62,7 @@ module.exports = {
     async update(request, reply) {
         const image_id = request.params.image_id
 
-        const possibleEntries = ["name", "caption", "url", "alt", "description", "type"]
+        const allowedEntries = ["name", "caption", "url", "alt", "description"]
         const imageUrl = imageUrl + request.file.filename
 
         const data = {
@@ -71,7 +71,7 @@ module.exports = {
         }
 
         Object.keys(request.body).forEach((key) => {
-            if (possibleEntries.includes(key)) data[key] = request.body[key]
+            if (allowedEntries.includes(key)) data[key] = request.body[key]
         })
 
         try {

@@ -1,53 +1,75 @@
-const Post = require("./Services");
-const Validation = require("./Schemas");
+const Posts = require("./Services")
+
 module.exports = async (app, options) => {
-  app.post(
-    "/posts/new/:user_id",
-    {
-      preValidation: [
-        (req, reply, done) => {
-          req.verify = [9, 10];
-          done();
+    app.get(
+        "/posts/all/:query",
+        {
+            preValidation: [
+                (req, reply, done) => {
+                    req.verify = [9, 10]
+                    done()
+                },
+                app.AuthHooks.verifyUser,
+            ],
         },
-        app.AuthHooks.verifyUser,
-      ],
-      // preHandler: Validation.create
-    },
-    Post.create
-  );
+        Posts.findAll
+    )
 
-  app.get("/posts/allPosts/:query", {}, Post.findAll);
-  app.get("/posts/users/:user_id/:query", {}, Post.findUserPosts);
-  // app.post('/posts/users/:user_id', { preValidation: app.AuthHooks.verifyUser }, Post.findSettingsPost)
-
-  app.get("/posts/:slug/", {}, Post.findOne);
-
-  app.patch(
-    "/posts/:user_id",
-    {
-      preValidation: [
-        (req, reply, done) => {
-          req.verify = [9, 10];
-          done();
+    app.get(
+        "/posts/:slug",
+        {
+            preValidation: [
+                (req, reply, done) => {
+                    req.verify = [9, 10]
+                    done()
+                },
+                app.AuthHooks.verifyUser,
+            ],
         },
-        app.AuthHooks.verifyUser,
-      ],
-      // preHandler: Validation.update
-    },
-    Post.update
-  );
+        Posts.findOne
+    )
 
-  app.delete(
-    "/posts/:user_id",
-    {
-      preValidation: [
-        (req, reply, done) => {
-          req.verify = [9, 10];
-          done();
+    app.post(
+        "/posts/new/:user_id",
+        {
+            preValidation: [
+                (req, reply, done) => {
+                    req.verify = [9, 10]
+                    done()
+                },
+                app.AuthHooks.verifyUser,
+            ],
+            // preHandler: Validation.create,
         },
-        app.AuthHooks.verifyUser,
-      ],
-    },
-    Post.delete
-  );
-};
+        Posts.create
+    )
+
+    app.patch(
+        "/posts/update",
+        {
+            preValidation: [
+                (req, reply, done) => {
+                    req.verify = [9, 10]
+                    done()
+                },
+                app.AuthHooks.verifyUser,
+            ],
+            // preHandler: Validation.update
+        },
+        Posts.update
+    )
+
+    app.delete(
+        "/posts/delete",
+        {
+            preValidation: [
+                (req, reply, done) => {
+                    req.verify = [10]
+                    done()
+                },
+                app.AuthHooks.verifyUser,
+            ],
+        },
+        Posts.delete
+    )
+}
