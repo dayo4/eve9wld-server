@@ -5,8 +5,9 @@ exports.up = function (knex) {
                 table.increments("id").primary()
                 table.string("title").notNullable()
                 table.string("slug").unique().notNullable()
+                table.string("featured_image")
                 table.string("images") // imageUrls[]
-                table.string("excerpt", 500)
+                table.string("excerpt", 300)
                 table.longtext("content").notNullable()
                 table.integer("votes")
                 table.integer("comments_count").unsigned()
@@ -14,7 +15,7 @@ exports.up = function (knex) {
                 table.string("categories") // categoryNames[]
                 table.text("tags") // string[]
                 table.string("type").defaultTo("post") //post, page
-                table.boolean("allow_comment").defaultTo(true)
+                table.boolean("allow_comments").defaultTo(true)
                 table
                     .integer("user_id")
                     .unsigned()

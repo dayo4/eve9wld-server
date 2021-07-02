@@ -5,6 +5,7 @@ exports.up = function (knex) {
                 table.increments("id").primary()
                 table.string("name").notNullable()
                 table.string("slug").unique().notNullable()
+                table.string("featured_image")
                 table.string("images") // imageUrls[]
                 table.string("price")
                 table.string("sale_price")
