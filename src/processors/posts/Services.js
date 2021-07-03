@@ -30,12 +30,13 @@ module.exports = {
 					"title",
 					"slug",
 					"excerpt",
-					"content",
+					// "content",
 					"featured_image",
-					"images",
-					"categories",
-					"tags",
+					// "images",
+					// "categories",
+					// "tags",
 					"votes",
+					"comments_count",
 					"created_at",
 					"updated_at"
 				)
@@ -69,12 +70,13 @@ module.exports = {
 					"title",
 					"slug",
 					"excerpt",
-					"content",
+					// "content",
 					"featured_image",
-					"images",
-					"categories",
-					"tags",
+					// "images",
+					// "categories",
+					// "tags",
 					"votes",
+					"comments_count",
 					"created_at",
 					"updated_at"
 				)
@@ -122,6 +124,7 @@ module.exports = {
 					"categories",
 					"tags",
 					"votes",
+					"comments_count",
 					"created_at",
 					"updated_at"
 				)
@@ -131,7 +134,9 @@ module.exports = {
 
 			if (post) {
 				const user = await knex
-					.select(
+					.from("users")
+					.where("id", post.user_id)
+					.first(
 						"username",
 						"profile_image",
 						"status",
@@ -139,9 +144,6 @@ module.exports = {
 						"first_name",
 						"last_name"
 					)
-					.from("users")
-					.where("id", post.user_id)
-					.first()
 
 				return {
 					...post,

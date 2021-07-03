@@ -7,6 +7,7 @@ exports.up = function (knex) {
 				table.string("author_ip")
 				table.integer("thumbs_up")
 				table.integer("thumbs_down")
+				table.integer("sub_comments").defaultTo(0)
 				table.string("status") //approved, hold, spam, unspam, untrash
 				table
 					.integer("user_id")

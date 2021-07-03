@@ -44,8 +44,10 @@ module.exports = {
 		const slug = request.params.slug
 
 		try {
-			const product = await knex
-				.select(
+			const post = await knex
+				.from("posts")
+				.where(slug)
+				.first(
 					"id",
 					"user_id",
 					"title",
@@ -56,16 +58,14 @@ module.exports = {
 					"status",
 					"tags",
 					"categories",
+					"featured_image",
 					"images",
 					"comments_count",
 					"created_at",
 					"updated_at"
 				)
-				.from("posts")
-				.where(slug)
-				.first()
 
-			if (product) {
+			if (post) {
 				const comments = await knex("product_reviews").where("post_id", post.id)
 				const categories = await knex("categories").where("type", "post")
 

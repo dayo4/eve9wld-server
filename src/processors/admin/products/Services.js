@@ -53,12 +53,11 @@ module.exports = {
 
 	async findOne(request, reply) {
 		const slug = request.params.slug
-		// const query = request.params.preview
-		//   ? { slug: slug }
-		//   : { published: true, slug: slug };
 		try {
 			const product = await knex
-				.select(
+				.from("products")
+				.where(slug)
+				.first(
 					"id",
 					"user_id",
 					"name",
@@ -72,6 +71,7 @@ module.exports = {
 					"rating_count",
 					"categories",
 					"tags",
+					"featured_image",
 					"images",
 					"upsell_ids",
 					"cross_sell_ids",
@@ -80,9 +80,6 @@ module.exports = {
 					"created_at",
 					"updated_at"
 				)
-				.from("products")
-				.where(slug)
-				.first()
 
 			if (product) {
 				const reviews = await knex("product_reviews").where("product_id", product.id)
