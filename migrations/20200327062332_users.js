@@ -19,7 +19,7 @@ exports.up = function (knex) {
 				/* same feilds needed for billing and shipping details */
 				table.string("first_name", 100)
 				table.string("last_name", 100).defaultTo("")
-				table.string("comapany_name", 100)
+				table.string("company_name", 100)
 				table.string("address_1")
 				table.string("address_2")
 				table.string("phone")
