@@ -8,7 +8,7 @@ module.exports = async (app, options) => {
 			preValidation: [
 				(req, reply, done) => {
 					req.verify = {
-						id: [req.params.user_id]
+						id: [ req.params.user_id ]
 					}
 					done()
 				},
@@ -17,13 +17,14 @@ module.exports = async (app, options) => {
 		},
 		Account.find
 	)
+
 	app.patch(
 		"/account/info/:user_id",
 		{
 			preValidation: [
 				(req, reply, done) => {
 					req.verify = {
-						id: [req.params.user_id]
+						id: [ req.params.user_id ]
 					}
 					done()
 				},
@@ -33,37 +34,20 @@ module.exports = async (app, options) => {
 		},
 		Account.update
 	)
-	// app.patch(
-	// 	"/users/:id",
-	// 	{
-	// 		preValidation: [
-	// 			(req, reply, done) => {
-	// 				req.verify = {
-	// 					id: [req.params.id]
-	// 				}
-	// 				done()
-	// 			},
-	// 			app.AuthHooks.verifyUser
-	// 		],
-	// 		preHandler: Schema.update
-	// 	},
-	// 	User.update
-	// )
-
-	// app.delete(
-	// 	"/users/:id",
-	// 	{
-	// 		preValidation: [
-	// 			(req, reply, done) => {
-	// 				req.verify = {
-	// 					id: [req.params.id]
-	// 				}
-	// 				done()
-	// 			},
-	// 			app.AuthHooks.verifyUser
-	// 		],
-	// 		schema: ""
-	// 	},
-	// 	User.delete
-	// )
+	app.delete(
+		"/account/info/:user_id",
+		{
+			preValidation: [
+				(req, reply, done) => {
+					req.verify = {
+						id: [ req.params.id ]
+					}
+					done()
+				},
+				app.AuthHooks.verifyUser
+			],
+			schema: ""
+		},
+		Account.delete
+	)
 }

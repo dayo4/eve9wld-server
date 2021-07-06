@@ -1,52 +1,42 @@
-const {knex, path, fsx, bcrypt, hlp} = require("../../../plugins")
+const { knex, path, fsx, bcrypt, hlp } = require("../../../plugins")
 
 module.exports = {
-	async find(request) {
+	async find (request) {
 		const user_id = request.params.user_id
 		try {
-			const fetchedData = await knex
-				.from("users")
+			const data = await knex("users")
 				.where({
-					user_id: user_id,
-					status: "active"
+					id: user_id,
+					account_status: "active" || "unverified"
 				})
 				.first(
 					"id",
-					"profile_image",
 					"priv",
-					"cover_image",
-					"about",
 					"username",
+					"status",
+					"about",
+					"profile_image",
+					"cover_image",
 					"first_name",
 					"last_name",
-					"status"
+					"url",
+					// "company_name",
+					// "address_1",
+					// "address_2",
+					// "phone",
+					// "country",
+					// "city",
+					// "state",
+					// "postcode",
+					"billing_details",
 				)
 
-			if (fetchedData) {
-				const data = ({
-					id,
-					profile_image,
-					cover_image,
-					about,
-					username,
-					status,
-					first_name,
-					last_name,
-					priv
-				} = fetchedData)
-				const newData = {
-					id,
-					profile_image,
-					cover_image,
-					about,
-					username,
-					status,
-					first_name,
-					last_name,
-					name: data.first_name + " " + data.last_name,
-					pr: data.priv
-				}
-				return newData
+			if (data) {
+				data.name = data.first_name + " " + data.last_name
+				data.pr = data.priv
+				data.billing_details = JSON.parse(data.billing_details)
+
+				return data
 			} else {
 				hlp.error("The requested user profile could not be located.", 404)
 			}
@@ -55,86 +45,126 @@ module.exports = {
 		}
 	},
 
-	async update(request) {
-		const id = request.params.id
-		const detail = ({status, about, first_name, last_name, old_password, new_password, active} =
-			request.body)
+	async update (request) {
+		const user_id = request.params.user_id
+		const target = request.body.target
+		const allowedEntries = [
+			'profile_image',
+			'first_name',
+			'last_name',
+			'about',
+			'url',
+			// 'company_name',
+			// 'country',
+			// 'address_1',
+			// 'address_2',
+			// 'city',
+			// 'state',
+			// 'postcode',
+			// 'company_no',
+		]
 
 		try {
-			const user = await knex("users")
-				.where("id", id)
-				.select("id", "password", "about", "username", "first_name", "last_name", "status")
-				.first()
+			const InitialData = await knex("users")
+				.where({
+					id: user_id,
+					account_status: "active" || "unverified"
+				})
+				.first(
+					"id",
+					"priv",
+					"username",
+					"status",
+					"about",
+					"profile_image",
+					"cover_image",
+					"first_name",
+					"last_name",
+					"url",
+					"billing_details",
+				)
 
-			if (status) {
-				const dataToSave = {
-					status
-				}
-				return updater(dataToSave)
-			} else if (first_name && last_name) {
-				const dataToSave = {
+			if (target === 'BillingInfo') {
+				const detail = {
 					first_name,
-					last_name
+					last_name,
+					company_name,
+					country,
+					address_1,
+					address_2,
+					city,
+					state,
+					postcode,
+					company_no,
+				} = request.body
+				const toSave = {
+					billing_details: JSON.stringify(detail)
 				}
-				return updater(dataToSave)
-			} else if (about) {
-				const dataToSave = {
-					about
+				if (!InitialData.first_name || !InitialData.last_name) {
+					toSave[ 'first_name' ] = detail.first_name
+					toSave[ 'last_name' ] = detail.last_name
 				}
-				return updater(dataToSave)
-			} else if (active === false) {
-				return updater({active: false}, false)
-			} else if (old_password && new_password) {
-				const matched = await bcrypt.compare(old_password, user.password)
+
+
+				const updated = await knex("users")
+					.where({
+						id: user_id,
+					}).update(toSave)
+
+				return 'Updated!'
+			}
+			else if (target === 'pass') {
+				const { old_password, new_password } = request.body
+				
+				const matched = await bcrypt.compare(old_password, InitialData.password)
 				if (matched) {
-					const hash = await bcrypt.hash(new_password, 10)
-					const dataToSave = {
-						password: hash
-					}
-					return updater(dataToSave, (returnData = false))
+					const hashedPassword = await bcrypt.hash(new_password, 12)
+
+					const updated = await knex("users")
+						.where({
+							id: user_id,
+						}).update({
+							password: hashedPassword
+						})
+					return 'Updated!'
 				} else {
 					hlp.error("You have entered an incorrect password. Check and try again.", 403)
 				}
 			}
+			else {
+				const data = {}
 
-			async function updater(dataToSave, returnData = true) {
-				try {
-					const updated = await knex("users").where("id", id).update(dataToSave)
-					if (updated) {
-						if (returnData) {
-							return {
-								user: dataToSave
-							}
-						} else {
-							return {
-								message: "success"
-							}
-						}
-					}
-				} catch (e) {
-					hlp.error(e)
-				}
+				Object.keys(request.body).forEach(key => {
+					if (allowedEntries.includes(key)) data[ key ] = request.body[ key ]
+				})
+
+				const updated = await knex
+					.from("users")
+					.where({
+						id: user_id,
+					}).update(data)
+				return 'Updated!'
 			}
 		} catch (e) {
 			hlp.error(e)
 		}
 	},
 
-	async delete(request) {
+	async delete (request) {
 		const id = request.params.id
 		try {
 			const deleted = await knex("users").where("id", id).del()
 			if (deleted) {
 				/*also delete all users images uploaded to directories */
-				const url = path.join(__dirname, "../..", "uploads/images/users/" + id)
-				return fsx
-					.remove(url)
-					.then(() => {
+				// const url = path.join(__dirname, "../..", "uploads/images/users/" + id)
+				// return fsx
+				// 	.remove(url)
+				// 	.then(() => {
 						return "Your Account has been deleted."
-					})
-					.catch(e => {
-						hlp.error(e)
-					})
+					// })
+					// .catch(e => {
+					// 	hlp.error(e)
+					// })
 			}
 		} catch (e) {
 			hlp.error(e, 401)

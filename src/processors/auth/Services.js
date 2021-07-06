@@ -47,7 +47,7 @@ module.exports = {
         }
 
         try {
-            const hashedPassword = await bcrypt.hash(request.body.password, 10)
+            const hashedPassword = await bcrypt.hash(request.body.password, 12)
 
             const adjustedData = {
                 ...data,

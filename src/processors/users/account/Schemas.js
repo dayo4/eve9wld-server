@@ -46,12 +46,12 @@ module.exports = {
 				{
 					fieldName: "Old Password",
 					data: old_password,
-					rules: {string: true, min: 6, max: 50}
+					rules: {string: true, min: 8}
 				},
 				{
 					fieldName: "New Password",
 					data: new_password,
-					rules: {string: true, min: 6, max: 50}
+					rules: {string: true, min: 8}
 				}
 			]
 			validate(schema, done)
