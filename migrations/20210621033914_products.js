@@ -18,7 +18,6 @@ exports.up = function (knex) {
                 table.datetime("on_sale_from")
                 table.datetime("on_sale_to")
                 table.boolean("sold_individually").defaultTo(true)
-                table.string("stock_status").defaultTo("instock") //[instock, outofstock]
                 table.string("status").defaultTo("draft") //[draft, published, pending, future-(datetime), private, archived]
                 table.string("attributes") // attributes[]
                 table.string("categories") // categoryIDs[]
@@ -38,7 +37,7 @@ exports.up = function (knex) {
                     .unsigned()
                     .references("id")
                     .inTable("users")
-                    .onUpdate("CASCADE") //.onDelete('CASCADE')
+                    .onUpdate("CASCADE")//.onDelete('SET NULL')
                 table.timestamps(true, true)
             })
         }

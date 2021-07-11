@@ -21,7 +21,7 @@ exports.up = function (knex) {
                     .unsigned()
                     .references("id")
                     .inTable("users")
-                    .onUpdate("CASCADE") //.onDelete('CASCADE')
+                    .onUpdate("CASCADE")//.onDelete('SET NULL')
                 table.timestamps(true, true)
             })
         }

@@ -9,7 +9,7 @@ app.register(require("fastify-multipart"))
 app.register(require("fastify-cors"), {
     origin:
         process.env.NODE_ENV === "development"
-            ? ["http://localhost:8080", "http://127.0.0.1:8080", "http://localhost:4000"]
+            ? ["http://localhost:8080", "http://localhost:8081", "http://127.0.0.1:8080", "http://localhost:4000"]
             : "",
 })
 
@@ -20,16 +20,16 @@ app.register(require("./globalHooks/AuthorizationHooks"), {})
 app.register(require("fastify-static"), {
     root: path.join(__dirname, "public"),
 })
-app.register(require("fastify-static"), {
-    root: path.join(__dirname, "uploads/images/users/"),
-    prefix: "/usr/",
-    decorateReply: false,
-})
-app.register(require("fastify-static"), {
-    root: path.join(__dirname, "uploads/images/posts/"),
-    prefix: "/pst/",
-    decorateReply: false,
-})
+// app.register(require("fastify-static"), {
+//     root: path.join(__dirname, "uploads/images/users/"),
+//     prefix: "/usr/",
+//     decorateReply: false,
+// })
+// app.register(require("fastify-static"), {
+//     root: path.join(__dirname, "uploads/images/posts/"),
+//     prefix: "/pst/",
+//     decorateReply: false,
+// })
 app.register(require("fastify-static"), {
     root: path.join(__dirname, "uploads/images/"),
     prefix: "/img/",

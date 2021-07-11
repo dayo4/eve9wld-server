@@ -16,7 +16,6 @@ const AuthorizationHooks = async (app, options = {}) => {
 						/* this message is useful at frontend! */ else reply.status(401).send("401")
 					} else {
 						if (toVerify) {
-							console.log(Number(toVerify.id[0]) === user.data.id)
 							if (toVerify.roles && toVerify.roles.includes(user.data.pr)) {
 								done()
 							} else if (toVerify.id && Number(toVerify.id[0]) === user.data.id) {

@@ -5,7 +5,7 @@ module.exports = {
     async createTable() {
         const data = { allow_new_reg: true }
         try {
-            const settings = await knex.select().from('system_settings').first()
+            const settings = await knex('system_settings').first()
             if (settings)
                 return
             else

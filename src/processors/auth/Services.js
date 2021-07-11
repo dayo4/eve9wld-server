@@ -53,8 +53,8 @@ module.exports = {
                 ...data,
                 password: hashedPassword,
                 profile_image: "1.jpg",
-                about: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita iure accusamus consequuntur totam officia vel ipsa dolor, porro nesciunt ratione quo nulla, minima obcaecati, provident vitae sapiente voluptas autem libero?Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita iure accusamus consequuntur totam officia vel ipsa dolor, porro nesciunt ratione quo nulla, minima obcaecati, provident vitae sapiente voluptas autem libero.",
-                status: "Hey there! I'm available.",
+                about: "",
+                status: "",
             }
 
             const user_id = await knex("users").insert(adjustedData)

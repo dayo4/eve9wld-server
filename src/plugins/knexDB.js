@@ -1,4 +1,4 @@
-require('dotenv').config()
+const connection = require('../../knexfile')
 
 const knex = require('knex')({
     client: 'mysql',
@@ -11,4 +11,5 @@ const knex = require('knex')({
     },
 })
 
-module.exports = knex
+
+module.exports =  knex

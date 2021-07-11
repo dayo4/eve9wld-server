@@ -15,7 +15,11 @@ module.exports = {
         try {
             const initialized = await Promise.all([UserZero.register(), Settings.createTable()])
             if (initialized)
-                return await fsx.writeJson(path.join(__dirname, 'conf.json'), { initialized: true })
+                 await fsx.writeJson(path.join(__dirname, 'conf.json'), { initialized: true }).then(done=>{
+                     console.log('done')
+                 }).catch(e=>{
+                     console.log('error: ',e)
+                 })
         } catch (e) {
             hlp.error(e)
         }
@@ -29,7 +33,7 @@ module.exports = {
 
     async getSettings() {
         try {
-            return await knex.select().from('system_settings').first()
+            return await knex('system_settings').first()
         }
         catch (e) {
             hlp.error(e)

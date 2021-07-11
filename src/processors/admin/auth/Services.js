@@ -82,8 +82,8 @@ module.exports = {
 
             const foundUser = await knex("users")
                 .where({ email: data.email }) /* .orWhere('username', data.email) */
-                .select(
-                    "id",
+                .first(
+                    "id", 
                     "priv",
                     "username",
                     "password",
@@ -94,7 +94,6 @@ module.exports = {
                     "last_name",
                     "account_status"
                 )
-                .first()
 
             if (foundUser) {
                 const matched = await bcrypt.compare(data.password, foundUser.password)

@@ -12,10 +12,10 @@ exports.up = function(knex) {
 							table.datetime('timestamp')
 							table.datetime('access_granted')
 							table.datetime('access_expires')
-							table.integer('user_id').unsigned().references('id').inTable('users').onUpdate('CASCADE')//.onDelete('CASCADE')
+							table.integer('user_id').unsigned().references('id').inTable('users').onUpdate('CASCADE')//.onDelete('SET NULL')
 							// table.integer('download_id').unsigned().references('id').inTable('downloads_logs').onUpdate('CASCADE')//.onDelete('CASCADE')
-							table.integer('product_id').unsigned().references('id').inTable('products').onUpdate('CASCADE')//.onDelete('CASCADE')
-							table.integer('order_id').unsigned().references('id').inTable('orders').onUpdate('CASCADE')//.onDelete('CASCADE')
+							table.integer('product_id').unsigned().references('id').inTable('products').onUpdate('CASCADE')//.onDelete('SET NULL')
+							table.integer('order_id').unsigned().references('id').inTable('orders').onUpdate('CASCADE')//.onDelete('SET NULL')
 							// table.timestamps(true, true)
 					})
 			}
