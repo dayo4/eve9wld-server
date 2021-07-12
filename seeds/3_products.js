@@ -19,9 +19,10 @@ return  await knex('products').insert(array);
 
 function data(i, users) {
   return {
-    name: 'A ' + i + ' ',
-    slug: 'a-'+i+'-f',
-    featured_image: images[random(images.length, images.length)],
+    name: 'A ' + i + ' fled by skots fled by skots fled by skots fled by skots fled by skots',
+    slug: 'a-'+i+'-fled-knmbv-fled-knmbv-fled-knmbv-fled-knmbv-fled-knmbv-fled-knmbv-',
+    featured_image: images[random(0, images.length)],
+    images:JSON.stringify(images[random(0, images.length)],images[random(0, images.length)]),
     price: random(3000, 4000),
     sale_price: random(1500, 2500),
     total_sales: random(6000, 12000),

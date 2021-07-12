@@ -21,7 +21,8 @@ function data(i) {
   return {
     first_name: 'FirstName' + i,
     last_name: 'LastName' + i,
-    profile_image: images[random(images.length, images.length)],
+    profile_image: images[random(0, images.length)],
+    cover_image: images[random(0, images.length)],
     account_status: 'active',
     username: 'user'+i+'-name',
     email: 'user'+i+'@test.com',

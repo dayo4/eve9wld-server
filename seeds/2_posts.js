@@ -19,9 +19,10 @@ return  await knex('posts').insert(array);
 
 function data(i, users) {
   return {
-    title: 'A ' + i + ' ',
-    slug: 'a-'+i+'-f',
-    featured_image: images[random(images.length, images.length)],
+    title: 'A ' + i + ' fled by skots fled by skots fled by skots fled by skots fled by skots',
+    slug: 'a-'+i+'-fled-knmbv-fled-knmbv-fled-knmbv-fled-knmbv-fled-knmbv-fled-knmbv-',
+    featured_image: images[random(0, images.length)],
+    images:JSON.stringify(images[random(0, images.length)],images[random(0, images.length)]),
     status: 'published',
     type: 'post',
     categories: JSON.stringify([
